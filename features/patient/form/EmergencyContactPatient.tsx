@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Controller } from "react-hook-form";
@@ -11,7 +10,9 @@ import {
 import { Input } from "@/components/ui/input";
 import type { PatientStepFormProps } from "../types";
 
-export default function EmergencyContactPatient({ control }: PatientStepFormProps) {
+export default function EmergencyContactPatient({
+  control,
+}: PatientStepFormProps) {
   return (
     <>
       <FieldGroup>
@@ -26,12 +27,13 @@ export default function EmergencyContactPatient({ control }: PatientStepFormProp
                   className="text-xs font-medium text-muted-foreground uppercase tracking-wide"
                 >
                   Contact Name
+                  <span className="ml-1 text-muted-foreground/60 normal-case font-normal">(Optional)</span>
                 </FieldLabel>
                 <Input
                   {...field}
                   id="form-emergency-contact-name"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Optional"
+                  placeholder="e.g. John Doe"
                   autoComplete="off"
                 />
                 {fieldState.invalid && (
@@ -50,12 +52,13 @@ export default function EmergencyContactPatient({ control }: PatientStepFormProp
                   className="text-xs font-medium text-muted-foreground uppercase tracking-wide"
                 >
                   Relationship
+                  <span className="ml-1 text-muted-foreground/60 normal-case font-normal">(Optional)</span>
                 </FieldLabel>
                 <Input
                   {...field}
                   id="form-emergency-contact-relationship"
                   aria-invalid={fieldState.invalid}
-                  placeholder="e.g. Spouse, Parent"
+                  placeholder=" e.g. Spouse, Parent"
                   autoComplete="off"
                 />
                 {fieldState.invalid && (

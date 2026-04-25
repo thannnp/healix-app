@@ -20,6 +20,7 @@ import InformationPatient from "./form/InformationPatient";
 import ContactPatient from "./form/ContactPatient";
 import EmergencyContactPatient from "./form/EmergencyContactPatient";
 import { patientSchema, type PatientSchema } from "./patient.schema";
+import { submitPatientForm } from "./actions";
 
 const stepFieldsValidation: (keyof PatientSchema)[][] = [
   [
@@ -52,8 +53,9 @@ export default function PatientForm() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const { handleSubmit, control, trigger } = useForm<PatientSchema>({
+  const { handleSubmit, control, trigger, reset } = useForm<PatientSchema>({
     mode: "all",
     resolver: zodResolver(patientSchema),
     defaultValues: {
@@ -87,11 +89,17 @@ export default function PatientForm() {
 
   const onSubmit = async (data: PatientSchema) => {
     setIsSubmitting(true);
-    // Simulate submit — will be replaced by Supabase INSERT
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("Submitted:", data);
+    setSubmitError(null);
+
+    const result = await submitPatientForm(data);
+
     setIsSubmitting(false);
-    setIsSuccess(true);
+
+    if (result.success) {
+      setIsSuccess(true);
+    } else {
+      setSubmitError(result.error);
+    }
   };
 
   if (isSuccess) {
@@ -100,6 +108,7 @@ export default function PatientForm() {
         onReset={() => {
           setIsSuccess(false);
           setCurrentStep(0);
+          reset();
         }}
       />
     );
@@ -127,7 +136,7 @@ export default function PatientForm() {
       />
 
       {/* Card */}
-      <form id="form-" onSubmit={handleSubmit(onSubmit)}>
+      <form id="patient-form" onSubmit={(e) => e.preventDefault()}>
         <div className="rounded-2xl bg-white p-6 shadow-xl sm:p-8">
           {/* Step Title */}
           <div className="mb-6 flex items-center gap-4">
@@ -147,6 +156,13 @@ export default function PatientForm() {
             </div>
           </div>
 
+          {/* Error Message */}
+          {submitError && (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {submitError}
+            </div>
+          )}
+
           {/* Step Content */}
           <div className="space-y-5">
             {currentStep === 0 && <InformationPatient control={control} />}
@@ -157,9 +173,14 @@ export default function PatientForm() {
           {/* Actions */}
           <div className="mt-8 flex items-center justify-between">
             <div>
-        
               {currentStep > 0 && (
-                <Button variant="outline" size="icon" aria-label="Go Back" type="button" onClick={handleBack}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  aria-label="Go Back"
+                  type="button"
+                  onClick={handleBack}
+                >
                   <ArrowLeftIcon />
                 </Button>
               )}
@@ -168,8 +189,9 @@ export default function PatientForm() {
             <div className="flex items-center gap-4">
               {isLastStep ? (
                 <Button
-                  type="submit"
+                  type="button"
                   disabled={isSubmitting}
+                  onClick={handleSubmit(onSubmit)}
                   className="h-11 rounded-full px-8 text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   {isSubmitting ? (

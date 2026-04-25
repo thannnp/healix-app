@@ -70,12 +70,13 @@ export default function InformationPatient({ control }: PatientStepFormProps) {
                   className="text-xs font-medium text-muted-foreground uppercase tracking-wide"
                 >
                   Middle Name
+                  <span className="ml-1 text-muted-foreground/60 normal-case font-normal">(Optional)</span>
                 </FieldLabel>
                 <Input
                   {...field}
                   id="form-middle-name"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Optional"
+                  placeholder="e.g. James"
                   autoComplete="off"
                 />
                 {fieldState.invalid && (
@@ -256,12 +257,13 @@ export default function InformationPatient({ control }: PatientStepFormProps) {
                   className="text-xs font-medium text-muted-foreground uppercase tracking-wide"
                 >
                   Religion
+                  <span className="ml-1 text-muted-foreground/60 normal-case font-normal">(Optional)</span>
                 </FieldLabel>
                 <Input
                   {...field}
                   id="form-religion"
                   aria-invalid={fieldState.invalid}
-                  placeholder="Optional"
+                  placeholder="e.g. Buddhism, Christianity"
                   autoComplete="off"
                 />
                 {fieldState.invalid && (

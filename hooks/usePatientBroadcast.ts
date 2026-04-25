@@ -5,6 +5,7 @@ import { useWatch, type Control } from "react-hook-form";
 import { createClient } from "@/lib/supabase/client";
 import type { PatientSchema } from "@/features/patient/patient.schema";
 import type { PatientFormData, PatientStatus } from "@/types/patient";
+import { v4 as uuidv4 } from "uuid";
 
 const CHANNEL_NAME = "patient-intake";
 const BROADCAST_EVENT = "patient-update";
@@ -12,7 +13,7 @@ const DEBOUNCE_MS = 500; // 500ms
 const IDLE_TIMEOUT_MS = 10000; // 10 seconds
 
 export function usePatientBroadcast(control: Control<PatientSchema>) {
-  const [sessionId] = useState(() => crypto.randomUUID());
+  const [sessionId] = useState(() => uuidv4());
 
   const channelRef = useRef<ReturnType<
     ReturnType<typeof createClient>["channel"]
@@ -24,12 +25,15 @@ export function usePatientBroadcast(control: Control<PatientSchema>) {
 
   const activeFieldRef = useRef<string | null>(null);
 
-
   const formValues = useWatch({ control });
   const formValuesRef = useRef(formValues);
 
   const resolveFieldKey = (el: Element): string | null => {
-    const id = (el as HTMLInputElement).name || el.id || el.getAttribute("data-field") || "";
+    const id =
+      (el as HTMLInputElement).name ||
+      el.id ||
+      el.getAttribute("data-field") ||
+      "";
     // ids follow the pattern "form-first-name" → strip "form-"
     const key = id.replace(/^form-/, "").replace(/-/g, "_");
     const validKeys: (keyof PatientFormData)[] = [
@@ -131,21 +135,18 @@ export function usePatientBroadcast(control: Control<PatientSchema>) {
     };
   }, [formValues, broadcast, resetIdleTimer]);
 
-
-  
-
   // ---- focus / blur handlers (event delegation) ----
   const handleFocusCapture = useCallback(
-  (e: React.FocusEvent) => {
-    const key = resolveFieldKey(e.target);
-    if (key) {
-      activeFieldRef.current = key;
-      resetIdleTimer();
-      broadcast({ activeField: key });
-    }
-  },
-  [broadcast, resetIdleTimer],
-);
+    (e: React.FocusEvent) => {
+      const key = resolveFieldKey(e.target);
+      if (key) {
+        activeFieldRef.current = key;
+        resetIdleTimer();
+        broadcast({ activeField: key });
+      }
+    },
+    [broadcast, resetIdleTimer],
+  );
 
   // ---- called after successful submit ----
   const broadcastSubmitted = useCallback(() => {

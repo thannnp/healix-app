@@ -21,6 +21,7 @@ import ContactPatient from "./form/ContactPatient";
 import EmergencyContactPatient from "./form/EmergencyContactPatient";
 import { patientSchema, type PatientSchema } from "./patient.schema";
 import { submitPatientForm } from "./actions";
+import { usePatientBroadcast } from "@/hooks/usePatientBroadcast";
 
 const stepFieldsValidation: (keyof PatientSchema)[][] = [
   [
@@ -75,6 +76,8 @@ export default function PatientForm() {
     },
   });
 
+  const { broadcastSubmitted, handleFocusCapture } = usePatientBroadcast(control);
+
   const handleNext = async () => {
     const fields = stepFieldsValidation[currentStep];
     const valid = await trigger(fields);
@@ -96,6 +99,7 @@ export default function PatientForm() {
     setIsSubmitting(false);
 
     if (result.success) {
+      broadcastSubmitted();
       setIsSuccess(true);
     } else {
       setSubmitError(result.error);
@@ -115,6 +119,7 @@ export default function PatientForm() {
   }
 
   const isLastStep = currentStep === steps.length - 1;
+
 
   return (
     <div>
@@ -136,7 +141,11 @@ export default function PatientForm() {
       />
 
       {/* Card */}
-      <form id="patient-form" onSubmit={(e) => e.preventDefault()}>
+      <form
+        id="patient-form"
+        onSubmit={(e) => e.preventDefault()}
+        onFocusCapture={(e) => {handleFocusCapture(e)}} 
+      >
         <div className="rounded-2xl bg-white p-6 shadow-xl sm:p-8">
           {/* Step Title */}
           <div className="mb-6 flex items-center gap-4">

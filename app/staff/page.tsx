@@ -6,72 +6,10 @@ import PatientDetailSheet from "@/components/PatientDetailSheet";
 import Link from "next/link";
 import { Activity, Users, CheckCircle2, Clock, ArrowLeft } from "lucide-react";
 import type { PatientSession } from "@/types/patient";
-
-// Mock data for UI preview — will be replaced by Supabase Realtime
-const mockPatients: PatientSession[] = [
-  {
-    sessionId: "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    formData: {
-      first_name: "Somchai",
-      last_name: "Jaidee",
-      date_of_birth: "1990-05-15",
-      gender: "Male",
-      phone_number: "0812345678",
-      email: "somchai@email.com",
-      address: "123 Sukhumvit Rd, Bangkok",
-      preferred_language: "Thai",
-      nationality: "Thai",
-    },
-    activeField: "email",
-    status: "typing",
-    lastActivity: new Date().toISOString(),
-  },
-  {
-    sessionId: "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-    formData: {
-      first_name: "Jane",
-      last_name: "Doe",
-      date_of_birth: "1985-11-20",
-      gender: "Female",
-      phone_number: "0898765432",
-      email: "jane.doe@email.com",
-      address: "456 Silom Rd, Bangkok",
-      preferred_language: "English",
-      nationality: "American",
-      emergency_contact_name: "John Doe",
-      emergency_contact_relationship: "Spouse",
-      religion: "Christian",
-    },
-    activeField: null,
-    status: "submitted",
-    lastActivity: new Date(Date.now() - 120000).toISOString(),
-  },
-  {
-    sessionId: "c3d4e5f6-a7b8-9012-cdef-123456789012",
-    formData: {
-      first_name: "Tanaka",
-      last_name: "",
-      gender: "Male",
-    },
-    activeField: null,
-    status: "idle",
-    lastActivity: new Date(Date.now() - 300000).toISOString(),
-  },
-  {
-    sessionId: "d4e5f6a7-b8c9-0123-defa-234567890123",
-    formData: {
-      first_name: "Maria",
-      last_name: "Garcia",
-      phone_number: "0876543210",
-    },
-    activeField: null,
-    status: "disconnected",
-    lastActivity: new Date(Date.now() - 600000).toISOString(),
-  },
-];
+import { usePatientSubscription } from "@/hooks/usePatientSubscription";
 
 export default function StaffPage() {
-  const [patients] = useState<PatientSession[]>(mockPatients);
+  const patients = usePatientSubscription();
   const [selectedPatient, setSelectedPatient] = useState<PatientSession | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
 

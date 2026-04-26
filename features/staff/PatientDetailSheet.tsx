@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import StatusIndicator from "@/components/StatusIndicator";
+import StatusIndicator from "@/features/staff/StatusIndicator";
 import { cn } from "@/lib/utils";
 import {
   User,

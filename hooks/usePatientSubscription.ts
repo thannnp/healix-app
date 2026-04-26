@@ -85,6 +85,7 @@ export function usePatientSubscription(initialPatients: PatientSession[] = []) {
           session.status !== "disconnected" &&
           age > DISCONNECT_THRESHOLD_MS
         ) {
+          // Mark typing, idle as disconnected if no activity for a while
           sessionsRef.current.set(id, {
             ...session,
             status: "disconnected",
@@ -95,6 +96,7 @@ export function usePatientSubscription(initialPatients: PatientSession[] = []) {
           session.status === "typing" &&
           age > IDLE_THRESHOLD_MS
         ) {
+          // Mark typing as idle if no activity for a while (IDLE_THRESHOLD_MS)
           sessionsRef.current.set(id, {
             ...session,
             status: "idle",

@@ -10,9 +10,10 @@ const STALE_CHECK_INTERVAL_MS = 10_000;
 const IDLE_THRESHOLD_MS = 30_000;
 const DISCONNECT_THRESHOLD_MS = 60_000;
 
-export function usePatientSubscription() {
-  const [patients, setPatients] = useState<PatientSession[]>([]);
+export function usePatientSubscription(initialPatients: PatientSession[] = []) {
+  const [patients, setPatients] = useState<PatientSession[]>(initialPatients);
   const sessionsRef = useRef<Map<string, PatientSession>>(new Map());
+  const initializedRef = useRef(false);
 
   const syncState = useCallback(() => {
     const sorted = Array.from(sessionsRef.current.values()).sort((a, b) => {
@@ -27,6 +28,17 @@ export function usePatientSubscription() {
     });
     setPatients(sorted);
   }, []);
+
+  // Seed the sessions map with initial DB patients (once)
+  useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
+    for (const patient of initialPatients) {
+      sessionsRef.current.set(patient.sessionId, patient);
+    }
+    if (initialPatients.length > 0) syncState();
+  }, [initialPatients, syncState]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -73,6 +85,7 @@ export function usePatientSubscription() {
           session.status !== "disconnected" &&
           age > DISCONNECT_THRESHOLD_MS
         ) {
+          // Mark typing, idle as disconnected if no activity for a while
           sessionsRef.current.set(id, {
             ...session,
             status: "disconnected",
@@ -83,6 +96,7 @@ export function usePatientSubscription() {
           session.status === "typing" &&
           age > IDLE_THRESHOLD_MS
         ) {
+          // Mark typing as idle if no activity for a while (IDLE_THRESHOLD_MS)
           sessionsRef.current.set(id, {
             ...session,
             status: "idle",

@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import StatusIndicator from "@/components/StatusIndicator";
+import StatusIndicator from "@/features/staff/StatusIndicator";
 import { cn } from "@/lib/utils";
 import { Phone, Mail, ChevronRight } from "lucide-react";
 import type { PatientSession } from "@/types/patient";
@@ -18,7 +18,7 @@ export default function PatientCard({ patient, onClick }: PatientCardProps) {
     "New Patient";
 
   const filledCount = Object.values(formData).filter(
-    (v) => typeof v === "string" && v.trim() !== ""
+    (v) => typeof v === "string" && v.trim() !== "",
   ).length;
 
   return (
@@ -29,7 +29,7 @@ export default function PatientCard({ patient, onClick }: PatientCardProps) {
         status === "typing" &&
           "ring-2 ring-green-400/50 shadow-md shadow-green-100",
         status === "submitted" && "ring-2 ring-primary/20",
-        status === "disconnected" && "opacity-60"
+        status === "disconnected" && "opacity-60",
       )}
     >
       <div className="p-4">
@@ -42,7 +42,7 @@ export default function PatientCard({ patient, onClick }: PatientCardProps) {
                 ? "bg-primary"
                 : status === "typing"
                   ? "bg-green-500"
-                  : "bg-primary/60"
+                  : "bg-primary/60",
             )}
           >
             {(formData.first_name?.[0] || "?").toUpperCase()}
@@ -89,17 +89,22 @@ export default function PatientCard({ patient, onClick }: PatientCardProps) {
         </div>
 
         {/* Active field indicator */}
-        {activeField && status === "typing" && (
-          <div className="mt-3 flex items-center gap-2 rounded-md bg-green-50 px-3 py-1.5 text-xs">
+        {
+          <div
+            className={`invisible ${activeField && status === "typing" ? "visible" : ""} mt-3 flex items-center gap-2 rounded-md bg-green-50 px-3 py-1.5 text-xs`}
+          >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
             </span>
             <span className="text-green-700">
-              Typing in <span className="font-medium">{activeField.replace(/_/g, " ")}</span>
+              Typing in{" "}
+              <span className="font-medium">
+                {activeField?.replace(/_/g, " ")}
+              </span>
             </span>
           </div>
-        )}
+        }
 
         {/* Last activity */}
         {lastActivity && (

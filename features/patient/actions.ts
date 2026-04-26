@@ -2,6 +2,43 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { patientSchema } from "./patient.schema";
+import type { PatientRow } from "@/types/database";
+
+export async function getSubmittedPatients() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("patients")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Supabase select error:", error);
+    return [];
+  }
+
+  return ((data as PatientRow[]) ?? []).map((row) => ({
+    sessionId: `db-${row.id}`,
+    formData: {
+      first_name: row.first_name ?? "",
+      middle_name: row.middle_name ?? undefined,
+      last_name: row.last_name ?? "",
+      date_of_birth: row.date_of_birth ?? "",
+      gender: row.gender ?? "",
+      phone_number: row.phone_number ?? "",
+      email: row.email ?? "",
+      address: row.address ?? "",
+      preferred_language: row.preferred_language ?? "",
+      nationality: row.nationality ?? "",
+      emergency_contact_name: row.emergency_contact_name ?? undefined,
+      emergency_contact_relationship: row.emergency_contact_relationship ?? undefined,
+      religion: row.religion ?? undefined,
+    },
+    activeField: null,
+    status: "submitted" as const,
+    lastActivity: row.created_at ?? new Date().toISOString(),
+  }));
+}
 
 export async function submitPatientForm(formData: unknown) {
   // Validate input server-side

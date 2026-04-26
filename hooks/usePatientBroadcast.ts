@@ -11,6 +11,7 @@ const CHANNEL_NAME = "patient-intake";
 const BROADCAST_EVENT = "patient-update";
 const DEBOUNCE_MS = 500; // 500ms
 const IDLE_TIMEOUT_MS = 10000; // 10 seconds
+const FOCUS_THROTTLE_MS = 300; // min interval between focus broadcasts
 
 export function usePatientBroadcast(control: Control<PatientSchema>) {
   const [sessionId] = useState(() => uuidv4());
@@ -24,6 +25,7 @@ export function usePatientBroadcast(control: Control<PatientSchema>) {
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const activeFieldRef = useRef<string | null>(null);
+  const lastFocusBroadcastRef = useRef<number>(0);
 
   const formValues = useWatch({ control });
   const formValuesRef = useRef(formValues);
@@ -139,11 +141,18 @@ export function usePatientBroadcast(control: Control<PatientSchema>) {
   const handleFocusCapture = useCallback(
     (e: React.FocusEvent) => {
       const key = resolveFieldKey(e.target);
-      if (key) {
-        activeFieldRef.current = key;
-        resetIdleTimer();
-        broadcast({ activeField: key });
-      }
+      if (!key) return;
+
+      const now = Date.now();
+      const isSameField = key === activeFieldRef.current;
+      const isTooSoon = now - lastFocusBroadcastRef.current < FOCUS_THROTTLE_MS;
+
+      if (isSameField && isTooSoon) return;
+
+      activeFieldRef.current = key;
+      lastFocusBroadcastRef.current = now;
+      resetIdleTimer();
+      broadcast({ activeField: key });
     },
     [broadcast, resetIdleTimer],
   );

@@ -1,3 +1,4 @@
+-- Create patients table
 create table if not exists patients (
   id uuid primary key default gen_random_uuid(),
   first_name text not null,
@@ -15,3 +16,18 @@ create table if not exists patients (
   religion text,
   created_at timestamptz not null default now()
 );
+ 
+-- Enable Row Level Security
+alter table patients enable row level security;
+ 
+-- Allow anonymous users to insert (patient form submission)
+create policy "Allow anonymous insert"
+  on patients for insert
+  to anon
+  with check (true);
+ 
+-- Allow anonymous users to read (staff dashboard)
+create policy "Allow anonymous select"
+  on patients for select
+  to anon
+  using (true);

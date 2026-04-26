@@ -20,9 +20,6 @@ export default function PatientSuccess({ onReset }: PatientSuccessProps) {
           Thank you! Your information has been submitted successfully.
         </p>
         <div className="mt-8 flex justify-center gap-4">
-          <Button onClick={onReset} variant="outline">
-            Submit Another
-          </Button>
           <Link href="/">
             <Button>Back to Home</Button>
           </Link>

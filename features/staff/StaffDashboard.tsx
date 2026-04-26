@@ -28,36 +28,28 @@ export default function StaffDashboard({ initialPatients }: StaffDashboardProps)
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-primary text-primary-foreground">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <Link
                 href="/"
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 transition-colors hover:bg-white/25"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/15 transition-colors hover:bg-white/25 sm:h-9 sm:w-9"
               >
                 <ArrowLeft className="h-4 w-4" />
               </Link>
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20">
+              <div className="hidden sm:flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20">
                 <Activity className="h-5 w-5" />
               </div>
-              <div>
-                <h1 className="text-xl font-bold tracking-tight">
+              <div className="min-w-0">
+                <h1 className="truncate text-base font-bold tracking-tight sm:text-xl">
                   Healix Staff Dashboard
                 </h1>
-                <p className="text-sm text-primary-foreground/70">
+                <p className="hidden text-sm text-primary-foreground/70 sm:block">
                   Real-time patient monitoring
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-3 w-3">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex h-3 w-3 rounded-full bg-green-400" />
-              </span>
-              <span className="text-sm font-medium text-primary-foreground/80">
-                Live
-              </span>
-            </div>
+            
           </div>
         </div>
       </header>
